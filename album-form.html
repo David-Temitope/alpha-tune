@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Album</title>
+  <link rel="stylesheet" href="css/album-form.css">
+</head>
+<body>
+
+  <h1>Add New Album</h1>
+
+  <form id="albumForm">
+    <input type="text" id="title" placeholder="Album Title" required>
+    <input type="text" id="artist" placeholder="Artist Name" required>
+    <input type="date" id="date" required>
+    <textarea id="description" placeholder="Album Description" rows="4" required></textarea>
+
+    <!-- Streaming Links -->
+    <input type="url" id="spotify" placeholder="Spotify Link">
+    <input type="url" id="apple" placeholder="Apple Music Link">
+    <input type="url" id="audiomack" placeholder="Audiomack Link">
+    <input type="url" id="soundcloud" placeholder="SoundCloud Link">
+    <input type="url" id="amazon" placeholder="Amazon Music Link">
+    <input type="url" id="tidal" placeholder="Tidal Link">
+    <input type="url" id="boomplay" placeholder="Boomplay Link">
+    <input type="url" id="youtube" placeholder="YouTube Music Link">
+
+    <input type="file" id="cover" accept="image/*" required>
+
+    <button type="submit">Save Album</button>
+  </form>
+
+  <h2>Uploaded Albums</h2>
+  <div id="albumsList"></div>
+
+  <script>
+    // Function to render uploaded albums
+    function renderAlbums() {
+      const releases = JSON.parse(localStorage.getItem('releases')) || [];
+      const albumsList = document.getElementById('albumsList');
+      albumsList.innerHTML = ''; // Clear previous albums list
+
+      releases.forEach(album => {
+        const albumDiv = document.createElement('div');
+        albumDiv.classList.add('album-item');
+        
+        // Album Thumbnail
+        const albumThumbnail = document.createElement('img');
+        albumThumbnail.src = album.thumbnail;
+        albumThumbnail.alt = 'Album Cover';
+        albumThumbnail.classList.add('album-thumbnail');
+        
+        // Album Info
+        const albumInfo = document.createElement('div');
+        albumInfo.classList.add('album-info');
+        
+        const albumTitle = document.createElement('span');
+        albumTitle.classList.add('album-title');
+        albumTitle.textContent = album.title;
+
+        const albumArtist = document.createElement('span');
+        albumArtist.classList.add('album-artist');
+        albumArtist.textContent = album.artist;
+        
+        albumInfo.appendChild(albumTitle);
+        albumInfo.appendChild(albumArtist);
+        
+        // Delete Button
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.classList.add('delete-button');
+        deleteButton.onclick = function () {
+          deleteAlbum(album.id);
+        };
+
+        albumDiv.appendChild(albumThumbnail);
+        albumDiv.appendChild(albumInfo);
+        albumDiv.appendChild(deleteButton);
+        
+        albumsList.appendChild(albumDiv);
+      });
+    }
+
+    // Function to delete an album
+    function deleteAlbum(albumId) {
+      let releases = JSON.parse(localStorage.getItem('releases')) || [];
+      releases = releases.filter(album => album.id !== albumId);
+      localStorage.setItem('releases', JSON.stringify(releases));
+      renderAlbums(); // Re-render the list after deletion
+    }
+
+    // Album form submission handler
+    document.getElementById('albumForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Check if all required fields are filled out
+      if (!document.getElementById('cover').files[0]) {
+        alert('Please upload a cover image.');
+        return;
+      }
+
+      const title = document.getElementById('title').value.trim();
+      const artist = document.getElementById('artist').value.trim();
+      const releaseDate = document.getElementById('date').value;
+      const description = document.getElementById('description').value.trim();
+
+      if (!title || !artist || !releaseDate || !description) {
+        alert('Please fill out all required fields.');
+        return;
+      }
+
+      const file = document.getElementById('cover').files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const albumData = {
+          id: crypto.randomUUID(),  // Using crypto.randomUUID() to ensure unique ID
+          type: 'album',
+          title: title,
+          artist: artist,
+          releaseDate: releaseDate,
+          description: description,
+          thumbnail: event.target.result,
+          links: {
+            spotify: document.getElementById('spotify').value,
+            apple: document.getElementById('apple').value,
+            audiomack: document.getElementById('audiomack').value,
+            soundcloud: document.getElementById('soundcloud').value,
+            amazon: document.getElementById('amazon').value,
+            tidal: document.getElementById('tidal').value,
+            boomplay: document.getElementById('boomplay').value,
+            youtube: document.getElementById('youtube').value
+          }
+        };
+
+        const releases = JSON.parse(localStorage.getItem('releases')) || [];
+        releases.push(albumData);
+        localStorage.setItem('releases', JSON.stringify(releases));
+
+        alert('Album added successfully!');
+        document.getElementById('albumForm').reset();
+        renderAlbums(); // Re-render the list after adding a new album
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    // Initial render of uploaded albums
+    renderAlbums();
+  </script>
+</body>
+</html>

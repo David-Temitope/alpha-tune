@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Artists - Alpha Tunes</title>
+  <style>
+    /* Reset & Fonts */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      color: #f8f9fa;
+      background-color: #0d0b1f;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background-color: #0a081a;
+      color: white;
+      padding: 1rem 2rem;
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    header nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 2rem;
+      font-weight: 500;
+    }
+
+    header nav a:hover {
+      color: #9b5de5;
+    }
+
+    /* Main Content */
+    .main-content {
+      padding: 2rem;
+    }
+
+    .main-content h2 {
+      font-size: 2rem;
+      color: #f15bb5;
+      margin-bottom: 1rem;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .input, .textarea {
+      padding: 1rem;
+      background-color: #0d0b1f;
+      border: 1px solid #444;
+      color: white;
+      border-radius: 12px;
+      font-size: 1rem;
+    }
+
+    .textarea {
+      resize: vertical;
+    }
+
+    button.button {
+      background: linear-gradient(90deg, #9b5de5, #f15bb5);
+      color: #0d0b1f;
+      padding: 0.9rem 2rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button.button:hover {
+      background: linear-gradient(90deg, #f15bb5, #9b5de5);
+      transform: scale(1.05);
+    }
+
+    /* Artist Grid */
+    #artistGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    #artistGrid div {
+      background-color: #1a1633;
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    #artistGrid img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    #artistGrid h3 {
+      font-size: 1.25rem;
+      color: #f8f9fa;
+      margin-top: 1rem;
+    }
+
+    #artistGrid p {
+      font-size: 1rem;
+      color: #ccc;
+      margin: 0.5rem 0;
+    }
+
+    #artistGrid a {
+      color: #9b5de5;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    /* Search Bar */
+    #searchInput {
+      padding: 1rem;
+      background-color: #0d0b1f;
+      border: 1px solid #444;
+      color: white;
+      border-radius: 12px;
+      font-size: 1rem;
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header .container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      header nav {
+        margin-top: 1rem;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Alpha Tunes</h1>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="artists.html"><strong>Artists</strong></a>
+        <a href="news.html">News</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="main-content">
+    <h2>All Artists</h2>
+    <p>Explore all musicians added to our platform</p>
+  </section>
+
+  <div>
+    <input type="text" id="searchInput" placeholder="Search by artist name...">
+  </div>
+
+  <section id="artistGrid">
+    <!-- Artist cards will dynamically appear here -->
+  </section>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const artistGrid = document.getElementById('artistGrid');
+
+    // Retrieve artist data from localStorage
+    const allArtists = JSON.parse(localStorage.getItem('artists')) || [];
+
+    // Function to render artists
+    function renderArtists(artists) {
+      artistGrid.innerHTML = '';
+      artists.forEach(artist => {
+        artistGrid.innerHTML += `
+          <div>
+            <img src="${artist.image}" alt="${artist.name}">
+            <div>
+              <h3>${artist.name}</h3>
+              <p>${artist.genre} • ${artist.years_active}</p>
+              <a href="artist.html?id=${artist.id}">View Profile →</a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Initial render of all artists
+    renderArtists(allArtists);
+
+    // Filter artists by name based on search input
+    searchInput.addEventListener('input', (e) => {
+      const keyword = e.target.value.toLowerCase();
+      const filtered = allArtists.filter(artist => artist.name.toLowerCase().includes(keyword));
+      renderArtists(filtered);
+    });
+  </script>
+</body>
+</html>

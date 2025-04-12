@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Single</title>
+  <style>
+    /* Reset & Fonts */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      color: #f8f9fa;
+      background-color: #0d0b1f;
+      line-height: 1.6;
+    }
+
+    h1, h2 {
+      color: #f15bb5;
+      margin-bottom: 1rem;
+    }
+
+    .main-content {
+      padding: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    input, textarea {
+      padding: 1rem;
+      background-color: #0d0b1f;
+      border: 1px solid #444;
+      color: white;
+      border-radius: 12px;
+      font-size: 1rem;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button[type="submit"] {
+      background: linear-gradient(90deg, #9b5de5, #f15bb5);
+      color: #0d0b1f;
+      padding: 0.9rem 2rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button[type="submit"]:hover {
+      background: linear-gradient(90deg, #f15bb5, #9b5de5);
+      transform: scale(1.05);
+    }
+
+    #singleList > div {
+      background-color: #1a1633;
+      padding: 1rem;
+      border-radius: 15px;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    #singleList img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 1rem;
+    }
+
+    #singleList div > div {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .delete-button {
+      background-color: #f15bb5;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .delete-button:hover {
+      background-color: #9b5de5;
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        padding: 1rem;
+      }
+
+      #singleList div {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      #singleList div > div {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-content">
+    <h1>Add New Single</h1>
+    <form id="singleForm">
+      <input type="text" id="title" placeholder="Title" required>
+      <input type="text" id="artist" placeholder="Artist Name" required>
+      <input type="date" id="date" required>
+      <textarea id="description" placeholder="Description" rows="4" required></textarea>
+
+      <input type="url" id="spotify" placeholder="Spotify Link">
+      <input type="url" id="apple" placeholder="Apple Music Link">
+      <input type="url" id="audiomack" placeholder="Audiomack Link">
+      <input type="url" id="soundcloud" placeholder="SoundCloud Link">
+      <input type="url" id="amazon" placeholder="Amazon Music Link">
+      <input type="url" id="tidal" placeholder="Tidal Link">
+      <input type="url" id="boomplay" placeholder="Boomplay Link">
+      <input type="url" id="youtube" placeholder="YouTube Music Link">
+
+      <input type="file" id="cover" accept="image/*" required>
+
+      <button type="submit">Save Single</button>
+    </form>
+
+    <h2>Uploaded Singles</h2>
+    <div id="singleList"></div>
+  </div>
+
+  <script>
+    document.getElementById('singleForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const file = document.getElementById('cover').files[0];
+      if (!file) {
+        alert('Please upload a cover image.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const singleData = {
+          id: Date.now(),
+          type: 'single',
+          title: document.getElementById('title').value.trim(),
+          artist: document.getElementById('artist').value.trim(),
+          date: document.getElementById('date').value,
+          description: document.getElementById('description').value.trim(),
+          thumbnail: event.target.result,
+          links: {
+            spotify: document.getElementById('spotify').value,
+            apple: document.getElementById('apple').value,
+            audiomack: document.getElementById('audiomack').value,
+            soundcloud: document.getElementById('soundcloud').value,
+            amazon: document.getElementById('amazon').value,
+            tidal: document.getElementById('tidal').value,
+            boomplay: document.getElementById('boomplay').value,
+            youtube: document.getElementById('youtube').value
+          }
+        };
+
+        const releases = JSON.parse(localStorage.getItem('releases')) || [];
+        releases.push(singleData);
+        localStorage.setItem('releases', JSON.stringify(releases));
+
+        const singles = JSON.parse(localStorage.getItem('singles')) || [];
+        singles.push(singleData);
+        localStorage.setItem('singles', JSON.stringify(singles));
+
+        alert('Single added successfully!');
+        document.getElementById('singleForm').reset();
+        loadSingles();
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    function loadSingles() {
+      const singles = JSON.parse(localStorage.getItem('singles')) || [];
+      const singleList = document.getElementById('singleList');
+      singleList.innerHTML = '';
+
+      singles.forEach(single => {
+        const singleItem = document.createElement('div');
+        singleItem.innerHTML = `
+          <div>
+            <img src="${single.thumbnail}" alt="Cover">
+            <div>
+              <p><strong>${single.title}</strong></p>
+              <p>${single.artist}</p>
+              <p>${single.date}</p>
+            </div>
+          </div>
+          <button class="delete-button" onclick="deleteSingle(${single.id})">Delete</button>
+        `;
+        singleList.appendChild(singleItem);
+      });
+    }
+
+    function deleteSingle(id) {
+      const singles = JSON.parse(localStorage.getItem('singles')) || [];
+      const updatedSingles = singles.filter(single => single.id !== id);
+      localStorage.setItem('singles', JSON.stringify(updatedSingles));
+      loadSingles();
+    }
+
+    loadSingles();
+  </script>
+</body>
+</html>

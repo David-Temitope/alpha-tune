@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>All Releases</title>
+  <style>
+    /* Reset & Fonts */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      color: #f8f9fa;
+      background-color: #0d0b1f;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background-color: #0a081a;
+      color: white;
+      padding: 1rem 2rem;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 2rem;
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      color: #9b5de5;
+    }
+
+    /* Main Content */
+    main {
+      padding: 2rem;
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+
+    section h2 {
+      font-size: 2rem;
+      color: #f15bb5;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      background-color: #1a1633;
+      padding: 1rem;
+      border-radius: 15px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .card img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .card div {
+      flex: 1;
+    }
+
+    .card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: #ccc;
+      margin-bottom: 0.3rem;
+    }
+
+    .card a {
+      color: #9b5de5;
+      text-decoration: underline;
+      font-weight: bold;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      nav {
+        margin-top: 1rem;
+      }
+
+      .card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .card img {
+        width: 100%;
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <h1>All Releases</h1>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="albums.html">Albums</a>
+        <a href="single.html">Singles</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <section>
+      <h2>Singles</h2>
+      <div id="singlesContainer"></div>
+    </section>
+
+    <section>
+      <h2>Albums</h2>
+      <div id="albumsContainer"></div>
+    </section>
+
+  </main>
+
+  <script>
+    // Load and render singles
+    const singles = JSON.parse(localStorage.getItem("singles")) || [];
+    const singlesContainer = document.getElementById("singlesContainer");
+
+    singles.forEach(single => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <img src="${single.thumbnail}" alt="${single.title}">
+        <div>
+          <h3>${single.title}</h3>
+          <p>by ${single.artist}</p>
+          <p>Released on: ${single.date}</p>
+          <a href="single-details.html?id=${single.id}">View Details</a>
+        </div>
+      `;
+      singlesContainer.appendChild(card);
+    });
+
+    // Load and render albums
+    const albums = JSON.parse(localStorage.getItem("albums")) || [];
+    const albumsContainer = document.getElementById("albumsContainer");
+
+    albums.forEach(album => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <img src="${album.thumbnail}" alt="${album.title}">
+        <div>
+          <h3>${album.title}</h3>
+          <p>by ${album.artist}</p>
+          <p>Released on: ${album.date}</p>
+          <a href="album-details.html?id=${album.id}">View Details</a>
+        </div>
+      `;
+      albumsContainer.appendChild(card);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Alpha Tunes - Spotlight Your Sound</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">Alpha Tunes</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="artists.html">Artists</a></li>
+        <li><a href="news.html">News</a></li>
+        <li><a href="releases.html">Releases</a></li>
+        <li><a href="add-artist.html" id="add-artist" style="display: none;">Add Artist</a></li>
+      </ul>
+      <div class="burger" id="burger">&#9776;</div>
+    </nav>
+  </header>
+
+  <!-- Sidebar -->
+<div id="sidebar" class="sidebar">
+  <a href="index.html" class="sidebar-link">Home</a>
+  <a href="artists.html" class="sidebar-link">Artists</a>
+  <a href="news.html" class="sidebar-link">News</a>
+  <a href="releases.html" class="sidebar-link">Releases</a>
+  <a href="add-artist.html" id="add-artist" style="display: none;">Add Artist</a>
+</div>
+<!-- Sidebar Toggle Button -->
+<div id="sidebar-toggle" class="sidebar-toggle">&#9776;</div>
+
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="overlay">
+      <h1>Spotlight Your Sound</h1>
+      <p>Discover new artists. Catch the latest news. Hear the freshest releases.</p>
+      <a href="https://wa.me/2348105546777" target="_blank" class="cta-btn">Get Featured Today</a>
+    </div>
+  </section>
+
+ 
+  
+  <!-- Featured Artists -->
+  <div class="highlight-box">
+    <h2>Featured Artists</h2>
+    <div class="artist-grid" id="artistsGrid"></div>
+  </div>
+
+  <!-- Latest News -->
+  <div class="highlight-box">
+    <h2>Latest News</h2>
+    <div class="artist-grid" id="latestNews"></div>
+  </div>
+
+  <!-- Latest Release -->
+  <div class="highlight-box">
+    <h2>Latest Release</h2>
+    <div class="artist-grid" id="latestRelease"></div>
+  </div>
+
+
+
+  <footer>
+    &copy; 2025 Alpha Tunes. All rights reserved.
+  </footer>
+
+  <script>
+    // Handle sidebar toggle on mobile
+document.getElementById('sidebar-toggle').addEventListener('click', function() {
+  document.getElementById('sidebar').classList.toggle('active');
+});
+
+
+    // Keep all your JS here untouched
+    function loadLatestNews() {
+  const newsArticles = JSON.parse(localStorage.getItem('news')) || [];
+  const latestNewsContainer = document.getElementById('latestNews');
+  latestNewsContainer.innerHTML = '';
+
+  const latestThree = newsArticles.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
+
+  if (latestThree.length > 0) {
+    latestThree.forEach(news => {
+      const preview = news.description.length > 100 ? news.description.slice(0, 100) + '...' : news.description;
+      latestNewsContainer.innerHTML += `
+        <div class="card">
+          <h3>${news.title}</h3>
+          <img src="${news.thumbnail}" alt="Thumbnail" />
+          <p class="news-date">${news.date}</p>
+          <div class="news-snippet">${preview}</div>
+          <a href="news-detail.html?id=${news.id}" class="read-more">Read More</a>
+        </div>
+      `;
+    });
+  } else {
+    latestNewsContainer.innerHTML = '<p>No news articles available.</p>';
+  }
+}
+
+
+function loadArtists() {
+  const artists = JSON.parse(localStorage.getItem('artists')) || [];
+  const artistsGrid = document.getElementById('artistsGrid');
+  artistsGrid.innerHTML = '';
+
+  if (artists.length === 0) {
+    artistsGrid.innerHTML = '<p>No featured artists available.</p>';
+    return;
+  }
+
+  // Ensure to sort artists by the date they were added, assuming there's a 'date' property.
+  const latestThreeArtists = artists.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
+
+  latestThreeArtists.forEach(artist => {
+    const genrePreview = artist.genre.length > 20 ? artist.genre.slice(0, 20) + '...' : artist.genre;
+    artistsGrid.innerHTML += `
+      <div class="artist-card">
+        <img src="${artist.image}" alt="${artist.name}" />
+        <h3>${artist.name}</h3>
+        <p>${genrePreview}</p>
+        <p><small>Born: ${artist.dob}</small></p>
+        <a href="artist.html?id=${artist.id}">View Details</a>
+      </div>
+    `;
+  });
+}
+  </script>
+
+<script>
+ function loadLatestRelease() {
+  const releases = JSON.parse(localStorage.getItem('singles')) || [];
+  const latestReleaseContainer = document.getElementById('latestRelease');
+  latestReleaseContainer.innerHTML = '';
+
+  if (releases.length === 0) {
+    latestReleaseContainer.innerHTML = '<p>No releases yet.</p>';
+    return;
+  }
+
+  // Sort releases by date
+  const latestRelease = releases.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+  const releasePreview = latestRelease.description.length > 80 ? latestRelease.description.slice(0, 80) + '...' : latestRelease.description;
+
+  latestReleaseContainer.innerHTML = `
+    <div class="cards">
+      <img src="${latestRelease.thumbnail}" alt="${latestRelease.title}" style="width: 100%; border-radius: 10px; object-fit: cover; height: 200px;">
+      <h3>${latestRelease.title}</h3>
+      <p><strong>Artist:</strong> ${latestRelease.artist}</p>
+      <p><strong>Released:</strong> ${latestRelease.date}</p>
+      <p>${releasePreview}</p>
+      <a href="single-details.html?id=${latestRelease.id}" class="read-more">See More</a>
+    </div>
+  `;
+}
+
+
+</script>
+
+<script>
+  document.addEventListener('keydown', function(e) {
+    // If Ctrl + Shift + A is pressed
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+      const adminBtn = document.getElementById('add-artist');
+      adminBtn.style.display = 'inline-block'; // Show the button
+      alert('Admin mode activated');
+    }
+  });
+
+
+  
+  window.onload = function() {
+      loadLatestNews();
+      loadLatestRelease();
+      loadArtists();
+    };
+</script>
+
+
+</body>
+</html>

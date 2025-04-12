@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>News - Alpha Tunes</title>
+  <link rel="stylesheet" href="css/news.css" />
+  <style>
+/* Reset & Fonts */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  color: #f8f9fa;
+  background-color: #0d0b1f;
+  line-height: 1.6;
+  padding-top: 70px; /* Space for fixed navbar */
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 10;
+}
+
+.navbar .logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+}
+
+.nav-links li {
+  margin-left: 2rem;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-links a:hover {
+  color: #9b5de5;
+}
+
+/* Header Styles */
+header {
+  background-color: transparent;
+  color: white;
+  padding: 1rem 0;
+}
+
+header h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin: 0;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+nav a {
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+nav a:hover {
+  color: #fff4f4;
+}
+
+/* Main Section */
+main {
+  background-color: #1a1633;
+  padding: 2rem 0;
+}
+
+main h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* News List Styles */
+.news-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.news-item {
+  background-color: #1a1633;
+  padding: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: white;
+}
+
+.news-item:hover {
+  transform: translateY(-5px);
+}
+
+.news-thumbnail {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
+}
+
+.news-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #00f5d4;
+  margin-bottom: 0.5rem;
+}
+
+.news-writer {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-top: 0.25rem;
+}
+
+.news-description {
+  font-size: 0.95rem;
+  color: #ccc;
+  margin: 0.75rem 0;
+  max-height: 3.6em; /* Roughly 2 lines */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.news-date {
+  font-size: 0.85rem;
+  color: #9b5de5;
+  margin-top: 0.25rem;
+}
+
+.read-more-btn {
+  margin-top: auto;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: linear-gradient(90deg, #9b5de5, #f15bb5);
+  color: white;
+  text-align: center;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.read-more-btn:hover {
+  background-color: #0d0b1f;
+}
+
+/* Footer Styles */
+footer {
+  background-color: #1a1633;
+  color: white;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  header {
+    padding: 1rem 0.5rem;
+  }
+
+  .news-list {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <h1>Alpha Tunes</h1>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="artists.html">Artists</a>
+        <a href="news.html">News</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Section -->
+  <main>
+    <h2>News Articles</h2>
+    <div id="newsList" class="news-list">
+      <!-- News articles will be dynamically loaded here -->
+    </div>
+  </main>
+
+  <!-- Script to load news -->
+  <script>
+    function loadNews() {
+  const newsList = document.getElementById('newsList');
+  let newsArticles = JSON.parse(localStorage.getItem('news')) || [];
+
+  newsList.innerHTML = ''; // Clear any existing content
+
+  newsArticles.forEach(news => {
+    const newsItem = document.createElement('div');
+    newsItem.classList.add('news-item');
+
+    newsItem.innerHTML = `
+      <img src="${news.thumbnail}" alt="Thumbnail" class="news-thumbnail">
+      <h4 class="news-title">${news.title}</h4>
+      <p class="news-writer">By ${news.author}</p>
+      <p class="news-description">${news.description}</p>
+      <p class="news-date">${news.date}</p>
+      <a href="news-detail.html?id=${news.id}" class="read-more-btn">Read More</a>
+    `;
+
+    newsList.appendChild(newsItem);
+  });
+}
+
+window.onload = loadNews;
+
+  </script>
+
+</body>
+</html>

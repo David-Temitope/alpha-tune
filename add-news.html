@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add News - Admin Panel</title>
+  <link rel="stylesheet" href="css/add-news.css">
+</head>
+<body class="bg-gray-900 text-white">
+  <!-- Header -->
+  <header class="bg-black shadow-md py-4">
+    <div class="container">
+      <h1 class="text-xl font-bold">Alpha Tunes</h1>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="single-form.html">Add Single</a>
+        <a href="album-form.html">Add Album</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <h2>Add News Article</h2>
+    <form id="newsForm" class="form">
+      <input type="text" id="title" name="title" placeholder="Title" class="input" required>
+      <textarea id="description" name="description" placeholder="Description" class="textarea" rows="4" required></textarea>
+      <input type="date" id="date" name="date" class="input" required>
+      <input type="text" id="author" name="author" placeholder="Writer" class="input" required>
+      <input type="file" id="thumbnail" class="input" accept="image/*" required>
+      <button type="submit" class="button">Save News</button>
+    </form>
+
+    <h2>Existing News Articles</h2>
+    <div id="newsList" class="news-list"></div>
+  </main>
+
+  <script>
+    const form = document.getElementById('newsForm');
+    const newsList = document.getElementById('newsList');
+
+    function loadNews() {
+      const newsArticles = JSON.parse(localStorage.getItem('news')) || [];
+      newsList.innerHTML = '';
+
+      newsArticles.forEach(news => {
+        const newsItem = document.createElement('div');
+        newsItem.classList.add('news-item');
+        newsItem.innerHTML = `
+          <h4 class="news-title">${news.title}</h4>
+          <p class="news-description">${news.description}</p>
+          <img src="${news.thumbnail}" alt="Thumbnail" class="news-thumbnail">
+          <p class="news-date">${news.date}</p>
+          <p class="news-writer">By: ${news.author}</p>
+          <button class="delete-button" data-id="${news.id}">Delete</button>
+        `;
+
+        const deleteButton = newsItem.querySelector('.delete-button');
+        deleteButton.addEventListener('click', function () {
+          deleteNews(news.id);
+        });
+
+        newsList.appendChild(newsItem);
+      });
+    }
+
+    function deleteNews(newsId) {
+      let newsArticles = JSON.parse(localStorage.getItem('news')) || [];
+      newsArticles = newsArticles.filter(news => news.id !== newsId);
+      localStorage.setItem('news', JSON.stringify(newsArticles));
+      alert('News article deleted successfully!');
+      loadNews();
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const title = form.elements['title'].value.trim();
+      const description = form.elements['description'].value.trim();
+      const date = form.elements['date'].value;
+      const author = form.elements['author'].value.trim();
+      const fileInput = document.getElementById('thumbnail');
+      const thumbnail = fileInput.files[0];
+
+      if (!thumbnail) {
+        alert("Please upload a thumbnail image.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const newsArticle = {
+          id: Date.now(),
+          title,
+          description,
+          date,
+          author,
+          thumbnail: event.target.result
+        };
+
+        const newsArticles = JSON.parse(localStorage.getItem('news')) || [];
+        newsArticles.push(newsArticle);
+        localStorage.setItem('news', JSON.stringify(newsArticles));
+
+        alert('News article added successfully!');
+        form.reset();
+        loadNews();
+      };
+
+      reader.readAsDataURL(thumbnail);
+    });
+
+    loadNews();
+  </script>
+</body>
+</html>
