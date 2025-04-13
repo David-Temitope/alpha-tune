@@ -64,6 +64,20 @@
     <div class="artist-grid" id="latestRelease"></div>
   </div>
 
+ <!-- Comment Section -->
+<div class="highlight-box">
+  <h2>Fan Comments</h2>
+  <div id="commentsContainer"></div>
+
+  <form id="commentForm" enctype="multipart/form-data" style="margin-top: 20px;">
+    <input type="text" id="username" placeholder="Your Name" required><br><br>
+    <textarea id="commentText" placeholder="Your Comment" required></textarea><br><br>
+    <label>Upload DP (optional):</label><br>
+    <input type="file" id="userImage" accept="image/*"><br><br>
+    <button type="submit">Post Comment</button>
+  </form>
+</div>
+
 
 
   <footer>
@@ -179,7 +193,109 @@ function loadArtists() {
       loadLatestRelease();
       loadArtists();
     };
+
+    
 </script>
+
+
+
+<script>
+  const commentForm = document.getElementById('commentForm');
+  const commentsContainer = document.getElementById('commentsContainer');
+
+  function displayComments() {
+    let comments = JSON.parse(localStorage.getItem('fanComments')) || [];
+
+    const latestFive = comments.slice(-5).reverse();
+    commentsContainer.innerHTML = '';
+
+    latestFive.forEach((comment, index) => {
+      if (comment.likes === undefined) comment.likes = 0;
+      if (comment.dislikes === undefined) comment.dislikes = 0;
+
+      const actualIndex = comments.length - 1 - index;
+      commentsContainer.innerHTML += `
+        <div class="comment-card" style="margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 10px;">
+          <div style="display: flex; align-items: center;">
+            <img src="${comment.image || 'https://via.placeholder.com/50'}" alt="User DP" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px;" />
+            <strong>${comment.name}</strong>
+          </div>
+          <p style="margin-top: 10px;">${comment.text}</p>
+          <div style="margin-top: 10px;">
+            <button onclick="toggleLike(${actualIndex})">👍 <span id="like-${actualIndex}">${comment.likes}</span></button>
+            <button onclick="toggleDislike(${actualIndex})">👎 <span id="dislike-${actualIndex}">${comment.dislikes}</span></button>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  function toggleLike(index) {
+    const comments = JSON.parse(localStorage.getItem('fanComments')) || [];
+    if (!comments[index]) return;
+
+    const userActions = JSON.parse(localStorage.getItem('userActions')) || {};
+    if (userActions[`like-${index}`]) return alert("You've already liked this comment.");
+
+    comments[index].likes = (comments[index].likes || 0) + 1;
+    userActions[`like-${index}`] = true;
+
+    localStorage.setItem('fanComments', JSON.stringify(comments));
+    localStorage.setItem('userActions', JSON.stringify(userActions));
+    displayComments();
+  }
+
+  function toggleDislike(index) {
+    const comments = JSON.parse(localStorage.getItem('fanComments')) || [];
+    if (!comments[index]) return;
+
+    const userActions = JSON.parse(localStorage.getItem('userActions')) || {};
+    if (userActions[`dislike-${index}`]) return alert("You've already disliked this comment.");
+
+    comments[index].dislikes = (comments[index].dislikes || 0) + 1;
+    userActions[`dislike-${index}`] = true;
+
+    localStorage.setItem('fanComments', JSON.stringify(comments));
+    localStorage.setItem('userActions', JSON.stringify(userActions));
+    displayComments();
+  }
+
+  commentForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById('username').value;
+    const text = document.getElementById('commentText').value;
+    const imageInput = document.getElementById('userImage');
+    const file = imageInput.files[0];
+
+    const reader = new FileReader();
+    reader.onload = function () {
+      const image = file ? reader.result : '';
+      const comments = JSON.parse(localStorage.getItem('fanComments')) || [];
+
+      comments.push({
+        name,
+        text,
+        image,
+        likes: 0,
+        dislikes: 0
+      });
+
+      localStorage.setItem('fanComments', JSON.stringify(comments));
+      commentForm.reset();
+      displayComments();
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      reader.onload(); // call manually
+    }
+  });
+
+  window.addEventListener('load', displayComments);
+</script>
+
 
 
 </body>
