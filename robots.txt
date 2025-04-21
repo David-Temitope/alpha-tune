@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://www.alpha-tunes.site/sitemap.xml
+Sitemap: https://www.alpha-tunes.netlify.app/sitemap.xml
