@@ -1,11 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Alpha Tunes - Spotlight Your Sound</title>
-  <link rel="stylesheet" href="css/style.css" />
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Meta Title and Description -->
+    <title>Alpha Tunes - Discover Independent Artists, Music News & Fresh Releases</title>
+    <meta name="description" content="Alpha Tunes is your hub for discovering rising artists, staying updated with the latest music news, and exploring fresh releases. Spotlight your sound today." />
+    
+    <!-- Canonical Link -->
+    <link rel="canonical" href="https://www.alphatunes.com/" />
+  
+    <!-- Open Graph for Social Media -->
+    <meta property="og:title" content="Alpha Tunes - Spotlight Your Sound" />
+    <meta property="og:description" content="Discover new artists, latest music news, and trending releases. Alpha Tunes brings your sound into the spotlight." />
+    <meta property="og:image" content="https://www.alphatunes.com/images/preview.jpg" />
+    <meta property="og:url" content="https://www.alphatunes.com/" />
+    <meta property="og:type" content="website" />
+  
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Alpha Tunes - Spotlight Your Sound" />
+    <meta name="twitter:description" content="Stay updated with new artists, music trends, and releases on Alpha Tunes." />
+    <meta name="twitter:image" content="https://www.alphatunes.com/images/preview.jpg" />
+  
+    <!-- Favicon -->
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+  
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  
 <body>
 
   <!-- Navbar -->
@@ -105,10 +130,10 @@ document.getElementById('sidebar-toggle').addEventListener('click', function() {
       latestNewsContainer.innerHTML += `
         <div class="card">
           <h3>${news.title}</h3>
-          <img src="${news.thumbnail}" alt="Thumbnail" />
+          <img src="${news.thumbnail}" alt="${news.title} - News Thumbnail" />
           <p class="news-date">${news.date}</p>
           <div class="news-snippet">${preview}</div>
-          <a href="news-detail.html?id=${news.id}" class="read-more">Read More</a>
+          <a href="news-detail.html?id=${news.id}">Read More About ${news.title}</a>
         </div>
       `;
     });
@@ -135,7 +160,7 @@ function loadArtists() {
     const genrePreview = artist.genre.length > 20 ? artist.genre.slice(0, 20) + '...' : artist.genre;
     artistsGrid.innerHTML += `
       <div class="artist-card">
-        <img src="${artist.image}" alt="${artist.name}" />
+        <img src="${artist.image}" alt="${artist.name} - Artist Photo" />
         <h3>${artist.name}</h3>
         <p>${genrePreview}</p>
         <p><small>Born: ${artist.dob}</small></p>
@@ -157,21 +182,25 @@ function loadArtists() {
     return;
   }
 
-  // Sort releases by date
-  const latestRelease = releases.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-  const releasePreview = latestRelease.description.length > 80 ? latestRelease.description.slice(0, 80) + '...' : latestRelease.description;
+  // Sort and slice the latest three releases
+  const latestThree = releases.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
 
-  latestReleaseContainer.innerHTML = `
-    <div class="cards">
-      <img src="${latestRelease.thumbnail}" alt="${latestRelease.title}" style="width: 100%; border-radius: 10px; object-fit: cover; height: 200px;">
-      <h3>${latestRelease.title}</h3>
-      <p><strong>Artist:</strong> ${latestRelease.artist}</p>
-      <p><strong>Released:</strong> ${latestRelease.date}</p>
-      <p>${releasePreview}</p>
-      <a href="single-details.html?id=${latestRelease.id}" class="read-more">See More</a>
-    </div>
-  `;
+  latestThree.forEach(release => {
+    const releasePreview = release.description.length > 80 ? release.description.slice(0, 80) + '...' : release.description;
+
+    latestReleaseContainer.innerHTML += `
+      <div class="cards">
+        <img src="${release.thumbnail}" alt="${release.title}" style="width: 100%; border-radius: 10px; object-fit: cover; height: 200px;">
+        <h3>${release.title}</h3>
+        <p><strong>Artist:</strong> ${release.artist}</p>
+        <p><strong>Released:</strong> ${release.date}</p>
+        <p>${releasePreview}</p>
+        <a href="single-details.html?id=${release.id}" class="read-more">See More</a>
+      </div>
+    `;
+  });
 }
+
 
 
 </script>
