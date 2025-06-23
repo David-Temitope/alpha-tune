@@ -1,14 +1,34 @@
+
+User-agent: *
+Allow: /
+Allow: /artists
+Allow: /artist/*
+Allow: /music
+Allow: /album/*
+Allow: /news
+Allow: /article/*
+
+# Block admin pages from search engines
+Disallow: /admin*
+Disallow: /admin/*
+
+# Block authentication pages
+Disallow: /auth*
+Disallow: /login*
+
+Sitemap: https://alphatunes.lovable.app/sitemap.xml
+
+# Specific bot permissions
 User-agent: Googlebot
 Allow: /
+Disallow: /admin*
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin*
 
 User-agent: Twitterbot
 Allow: /
 
 User-agent: facebookexternalhit
-Allow: /
-
-User-agent: *
 Allow: /

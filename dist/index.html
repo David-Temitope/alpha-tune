@@ -28,11 +28,11 @@
       window.addEventListener('DOMContentLoaded', () => {
         const favicon = document.querySelector('link[rel="icon"]');
         if (favicon) {
-          favicon.href = '../alpha-tune/public/favicon.ico';  // Adjust path as needed based on your project structure
+          favicon.href = './favicon.ico';  // Adjust path as needed based on your project structure
         } else {
           const newFavicon = document.createElement('link');
           newFavicon.rel = 'icon';
-          newFavicon.href = '../alpha-tune/public/favicon.ico';
+          newFavicon.href = './favicon.ico';
           document.head.appendChild(newFavicon);
         }
       });
