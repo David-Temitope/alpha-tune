@@ -24,20 +24,6 @@
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
 
-    <script>
-      window.addEventListener('DOMContentLoaded', () => {
-        const favicon = document.querySelector('link[rel="icon"]');
-        if (favicon) {
-          favicon.href = './favicon.ico';  // Adjust path as needed based on your project structure
-        } else {
-          const newFavicon = document.createElement('link');
-          newFavicon.rel = 'icon';
-          newFavicon.href = './favicon.ico';
-          document.head.appendChild(newFavicon);
-        }
-      });
-    </script>
-
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
