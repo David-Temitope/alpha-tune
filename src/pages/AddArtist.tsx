@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,25 +9,37 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import { useCreateArtist } from "@/hooks/useSupabaseData";
-import { useAuth } from "@/hooks/useAuth";
+import ImageUpload from "@/components/ImageUpload";
 
 const AddArtist = () => {
   const navigate = useNavigate();
-  const { user, isAdmin, loading } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
   const createArtist = useCreateArtist();
   
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    // Check for admin authentication
+    const adminAuth = localStorage.getItem('admin_authenticated');
+    const adminUser = localStorage.getItem('admin_user');
+    
+    if (adminAuth === 'true' && adminUser) {
+      setIsAuthenticated(true);
+    } else {
       navigate("/admin/login");
     }
-  }, [user, isAdmin, loading, navigate]);
+    setLoading(false);
+  }, [navigate]);
 
   const [formData, setFormData] = useState({
     name: "",
     bio: "",
     genre: "",
     image: "",
-    followers: 0
+    followers: 0,
+    instagram: "",
+    twitter: "",
+    facebook: "",
+    youtube: ""
   });
 
   const genres = [
@@ -51,8 +64,12 @@ const AddArtist = () => {
         bio: formData.bio || null,
         genre: formData.genre as any,
         image: formData.image || null,
-        followers: formData.followers
-      });
+        followers: formData.followers,
+        instagram: formData.instagram || null,
+        twitter: formData.twitter || null,
+        facebook: formData.facebook || null,
+        youtube: formData.youtube || null
+      } as any);
 
       navigate("/admin/dashboard");
     } catch (error) {
@@ -68,7 +85,7 @@ const AddArtist = () => {
     );
   }
 
-  if (!user || !isAdmin) {
+  if (!isAuthenticated) {
     return null;
   }
 
@@ -126,17 +143,11 @@ const AddArtist = () => {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="image" className="text-gray-300">Image URL</Label>
-                <Input
-                  id="image"
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({...formData, image: e.target.value})}
-                  className="bg-gray-800 border-gray-700 text-white"
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
+              <ImageUpload
+                onImageUploaded={(url) => setFormData({...formData, image: url})}
+                currentImage={formData.image}
+                label="Artist Image"
+              />
 
               <div className="space-y-2">
                 <Label htmlFor="followers" className="text-gray-300">Followers</Label>
@@ -147,6 +158,58 @@ const AddArtist = () => {
                   onChange={(e) => setFormData({...formData, followers: parseInt(e.target.value) || 0})}
                   className="bg-gray-800 border-gray-700 text-white"
                 />
+              </div>
+
+              <div className="space-y-4">
+                <Label className="text-gray-300">Social Media Links</Label>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="instagram" className="text-gray-400 text-sm">Instagram</Label>
+                  <Input
+                    id="instagram"
+                    type="url"
+                    value={formData.instagram}
+                    onChange={(e) => setFormData({...formData, instagram: e.target.value})}
+                    className="bg-gray-800 border-gray-700 text-white"
+                    placeholder="https://instagram.com/artist"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="twitter" className="text-gray-400 text-sm">Twitter</Label>
+                  <Input
+                    id="twitter"
+                    type="url"
+                    value={formData.twitter}
+                    onChange={(e) => setFormData({...formData, twitter: e.target.value})}
+                    className="bg-gray-800 border-gray-700 text-white"
+                    placeholder="https://twitter.com/artist"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="facebook" className="text-gray-400 text-sm">Facebook</Label>
+                  <Input
+                    id="facebook"
+                    type="url"
+                    value={formData.facebook}
+                    onChange={(e) => setFormData({...formData, facebook: e.target.value})}
+                    className="bg-gray-800 border-gray-700 text-white"
+                    placeholder="https://facebook.com/artist"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="youtube" className="text-gray-400 text-sm">YouTube</Label>
+                  <Input
+                    id="youtube"
+                    type="url"
+                    value={formData.youtube}
+                    onChange={(e) => setFormData({...formData, youtube: e.target.value})}
+                    className="bg-gray-800 border-gray-700 text-white"
+                    placeholder="https://youtube.com/artist"
+                  />
+                </div>
               </div>
 
               <Button 

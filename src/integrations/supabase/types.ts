@@ -19,6 +19,7 @@ export type Database = {
           id: string
           image: string | null
           release_date: string
+          song_link: string | null
           title: string
           tracks: number | null
           updated_at: string | null
@@ -32,6 +33,7 @@ export type Database = {
           id?: string
           image?: string | null
           release_date: string
+          song_link?: string | null
           title: string
           tracks?: number | null
           updated_at?: string | null
@@ -45,6 +47,7 @@ export type Database = {
           id?: string
           image?: string | null
           release_date?: string
+          song_link?: string | null
           title?: string
           tracks?: number | null
           updated_at?: string | null
@@ -63,32 +66,71 @@ export type Database = {
         Row: {
           bio: string | null
           created_at: string | null
+          facebook: string | null
           followers: number | null
           genre: Database["public"]["Enums"]["genre_type"]
           id: string
           image: string | null
+          instagram: string | null
           name: string
+          twitter: string | null
           updated_at: string | null
+          youtube: string | null
         }
         Insert: {
           bio?: string | null
           created_at?: string | null
+          facebook?: string | null
           followers?: number | null
           genre: Database["public"]["Enums"]["genre_type"]
           id?: string
           image?: string | null
+          instagram?: string | null
           name: string
+          twitter?: string | null
           updated_at?: string | null
+          youtube?: string | null
         }
         Update: {
           bio?: string | null
           created_at?: string | null
+          facebook?: string | null
           followers?: number | null
           genre?: Database["public"]["Enums"]["genre_type"]
           id?: string
           image?: string | null
+          instagram?: string | null
           name?: string
+          twitter?: string | null
           updated_at?: string | null
+          youtube?: string | null
+        }
+        Relationships: []
+      }
+      likes: {
+        Row: {
+          created_at: string
+          id: string
+          is_like: boolean
+          item_id: string
+          item_type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_like: boolean
+          item_id: string
+          item_type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_like?: boolean
+          item_id?: string
+          item_type?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -155,7 +197,7 @@ export type Database = {
     }
     Functions: {
       is_admin: {
-        Args: { user_id: string }
+        Args: Record<PropertyKey, never> | { user_id: string }
         Returns: boolean
       }
     }

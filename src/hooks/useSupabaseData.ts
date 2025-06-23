@@ -60,7 +60,7 @@ export const useArtist = (id: string) => {
         .from('artists')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
       
       if (error) throw error;
       return data;
@@ -78,7 +78,7 @@ export const useAlbum = (id: string) => {
         .from('albums')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
       
       if (error) throw error;
       return data;
@@ -96,7 +96,7 @@ export const useNewsArticle = (id: string) => {
         .from('news')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
       
       if (error) throw error;
       return data;

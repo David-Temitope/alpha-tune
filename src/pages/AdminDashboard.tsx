@@ -1,14 +1,16 @@
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Music, User, FileText, Plus, Trash2, LogOut } from "lucide-react";
 import { useArtists, useAlbums, useNews, useDeleteArtist, useDeleteAlbum, useDeleteNews } from "@/hooks/useSupabaseData";
-import { useAuth } from "@/hooks/useAuth";
+import SEOHead from "@/components/SEOHead";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
-  const { user, isAdmin, loading, signOut } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { data: artists } = useArtists();
   const { data: albums } = useAlbums();
   const { data: news } = useNews();
@@ -18,10 +20,17 @@ const AdminDashboard = () => {
   const deleteNews = useDeleteNews();
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    // Check for admin authentication
+    const adminAuth = localStorage.getItem('admin_authenticated');
+    const adminUser = localStorage.getItem('admin_user');
+    
+    if (adminAuth === 'true' && adminUser) {
+      setIsAuthenticated(true);
+    } else {
       navigate("/admin/login");
     }
-  }, [user, isAdmin, loading, navigate]);
+    setLoading(false);
+  }, [navigate]);
 
   if (loading) {
     return (
@@ -31,7 +40,7 @@ const AdminDashboard = () => {
     );
   }
 
-  if (!user || !isAdmin) {
+  if (!isAuthenticated) {
     return null;
   }
 
@@ -74,13 +83,20 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
+  const handleSignOut = () => {
+    localStorage.removeItem('admin_authenticated');
+    localStorage.removeItem('admin_user');
     navigate("/");
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-purple-950 to-gray-950 py-8">
+      <SEOHead
+        title="Admin Dashboard - Alpha Tunes"
+        description="Admin dashboard for managing Alpha Tunes content"
+        noIndex={true}
+      />
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -164,7 +180,7 @@ const AdminDashboard = () => {
                   Recent Artists
                 </span>
                 <Button asChild variant="ghost" size="sm" className="text-purple-400">
-                  <Link to="/artists">View All</Link>
+                  <Link to="/admin/artists">View All</Link>
                 </Button>
               </CardTitle>
             </CardHeader>
@@ -205,7 +221,7 @@ const AdminDashboard = () => {
                   Recent Albums
                 </span>
                 <Button asChild variant="ghost" size="sm" className="text-purple-400">
-                  <Link to="/music">View All</Link>
+                  <Link to="/admin/albums">View All</Link>
                 </Button>
               </CardTitle>
             </CardHeader>
@@ -247,7 +263,7 @@ const AdminDashboard = () => {
                 Recent Articles
               </span>
               <Button asChild variant="ghost" size="sm" className="text-purple-400">
-                <Link to="/news">View All</Link>
+                <Link to="/admin/articles">View All</Link>
               </Button>
             </CardTitle>
           </CardHeader>

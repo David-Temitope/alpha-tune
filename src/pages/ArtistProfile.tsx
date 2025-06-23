@@ -6,6 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, Music, Album, ArrowLeft } from "lucide-react";
 import { useArtist, useAlbums } from "@/hooks/useSupabaseData";
+import SEOHead from "@/components/SEOHead";
+import StructuredData from "@/components/StructuredData";
+import LikeButtons from "@/components/LikeButtons";
+import SocialMediaIcons from "@/components/SocialMediaIcons";
 
 const ArtistProfile = () => {
   const { id } = useParams();
@@ -38,6 +42,22 @@ const ArtistProfile = () => {
 
   return (
     <div className="min-h-screen py-8">
+      <SEOHead
+        title={`${artist.name} - ${artist.genre} Artist | Alpha Tunes`}
+        description={artist.bio || `Discover ${artist.name}, a talented ${artist.genre} artist with ${artist.followers} followers. Explore their music and latest releases on Alpha Tunes.`}
+        image={artist.image}
+        type="profile"
+        keywords={[artist.name.toLowerCase(), artist.genre.toLowerCase(), "artist", "music", "alpha tunes"]}
+      />
+      
+      <StructuredData 
+        type="person" 
+        data={{
+          ...artist,
+          url: window.location.href
+        }} 
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
         <Button asChild variant="ghost" className="mb-6 text-purple-400 hover:text-purple-300">
@@ -52,17 +72,18 @@ const ArtistProfile = () => {
           <div className="flex flex-col md:flex-row items-center gap-8">
             <img
               src={artist.image || 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400'}
-              alt={artist.name}
+              alt={`${artist.name} profile picture`}
               className="w-48 h-48 rounded-full object-cover border-4 border-purple-500"
+              loading="lazy"
             />
-            <div className="text-center md:text-left">
+            <div className="text-center md:text-left flex-1">
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
                 {artist.name}
               </h1>
               <Badge className="text-lg px-4 py-2 bg-purple-600 mb-4">
                 {artist.genre}
               </Badge>
-              <div className="flex flex-col sm:flex-row gap-6 text-gray-300">
+              <div className="flex flex-col sm:flex-row gap-6 text-gray-300 mb-6">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-white">{artist.followers}</div>
                   <div className="text-sm">Followers</div>
@@ -71,6 +92,18 @@ const ArtistProfile = () => {
                   <div className="text-2xl font-bold text-white">{artistAlbums.length}</div>
                   <div className="text-sm">Albums</div>
                 </div>
+              </div>
+              
+              {/* Social Media Icons */}
+              <SocialMediaIcons 
+                instagram={(artist as any).instagram}
+                twitter={(artist as any).twitter}
+                facebook={(artist as any).facebook}
+                youtube={(artist as any).youtube}
+              />
+              
+              <div className="mt-6">
+                <LikeButtons itemType="artist" itemId={artist.id} />
               </div>
             </div>
           </div>
@@ -110,8 +143,9 @@ const ArtistProfile = () => {
                     <div className="relative overflow-hidden rounded-t-lg">
                       <img
                         src={album.image || 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400'}
-                        alt={album.title}
+                        alt={`${album.title} album cover`}
                         className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                        loading="lazy"
                       />
                       <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                         <Button size="sm" className="bg-purple-600 hover:bg-purple-700">

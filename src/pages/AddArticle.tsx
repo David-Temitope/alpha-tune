@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,18 +9,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import { useCreateNews } from "@/hooks/useSupabaseData";
-import { useAuth } from "@/hooks/useAuth";
+import ImageUpload from "@/components/ImageUpload";
 
 const AddArticle = () => {
   const navigate = useNavigate();
-  const { user, isAdmin, loading } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
   const createNews = useCreateNews();
   
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    // Check for admin authentication
+    const adminAuth = localStorage.getItem('admin_authenticated');
+    const adminUser = localStorage.getItem('admin_user');
+    
+    if (adminAuth === 'true' && adminUser) {
+      setIsAuthenticated(true);
+    } else {
       navigate("/admin/login");
     }
-  }, [user, isAdmin, loading, navigate]);
+    setLoading(false);
+  }, [navigate]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -65,7 +74,7 @@ const AddArticle = () => {
     );
   }
 
-  if (!user || !isAdmin) {
+  if (!isAuthenticated) {
     return null;
   }
 
@@ -146,17 +155,11 @@ const AddArticle = () => {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="image" className="text-gray-300">Image URL</Label>
-                <Input
-                  id="image"
-                  type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({...formData, image: e.target.value})}
-                  className="bg-gray-800 border-gray-700 text-white"
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
+              <ImageUpload
+                onImageUploaded={(url) => setFormData({...formData, image: url})}
+                currentImage={formData.image}
+                label="Article Image"
+              />
 
               <Button 
                 type="submit" 

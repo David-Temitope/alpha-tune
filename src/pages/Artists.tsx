@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,14 @@ const Artists = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
   
-  const genres = ["All", "Electronic", "Hip-Hop", "Folk", "Pop", "Rock", "Jazz", "Classical", "Country", "R&B", "Reggae"];
+  const genres = [
+    "All", "Electronic", "Hip-Hop", "Folk", "Pop", "Rock", "Jazz", "Classical", 
+    "Country", "R&B", "Reggae", "Afrobeat", "Dancehall", "Reggaeton", "Latin", 
+    "Gospel", "Blues", "Funk", "Soul", "Disco", "House", "Techno", "Trance", 
+    "Dubstep", "Drum & Bass", "Ambient", "World", "African", "Caribbean", 
+    "Ska", "Punk", "Metal", "Alternative", "Indie", "Folk Rock", "Synthwave", 
+    "Lo-fi", "Trap", "Drill", "Amapiano", "Highlife", "Juju", "Fuji"
+  ];
   
   const filteredArtists = artists?.filter((artist) => {
     const matchesSearch = artist.name.toLowerCase().includes(searchQuery.toLowerCase());

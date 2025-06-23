@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,19 +9,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
 import { useCreateAlbum, useArtists } from "@/hooks/useSupabaseData";
-import { useAuth } from "@/hooks/useAuth";
+import ImageUpload from "@/components/ImageUpload";
 
 const AddAlbum = () => {
   const navigate = useNavigate();
-  const { user, isAdmin, loading } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
   const createAlbum = useCreateAlbum();
   const { data: artists } = useArtists();
   
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    // Check for admin authentication
+    const adminAuth = localStorage.getItem('admin_authenticated');
+    const adminUser = localStorage.getItem('admin_user');
+    
+    if (adminAuth === 'true' && adminUser) {
+      setIsAuthenticated(true);
+    } else {
       navigate("/admin/login");
     }
-  }, [user, isAdmin, loading, navigate]);
+    setLoading(false);
+  }, [navigate]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -30,12 +39,17 @@ const AddAlbum = () => {
     image: "",
     release_date: "",
     tracks: 0,
-    description: ""
+    description: "",
+    song_link: ""
   });
 
   const genres = [
-    "Electronic", "Hip-Hop", "Folk", "Pop", "Rock", 
-    "Jazz", "Classical", "Country", "R&B", "Reggae"
+    "Electronic", "Hip-Hop", "Folk", "Pop", "Rock", "Jazz", "Classical", 
+    "Country", "R&B", "Reggae", "Afrobeat", "Dancehall", "Reggaeton", "Latin", 
+    "Gospel", "Blues", "Funk", "Soul", "Disco", "House", "Techno", "Trance", 
+    "Dubstep", "Drum & Bass", "Ambient", "World", "African", "Caribbean", 
+    "Ska", "Punk", "Metal", "Alternative", "Indie", "Folk Rock", "Synthwave", 
+    "Lo-fi", "Trap", "Drill", "Amapiano", "Highlife", "Juju", "Fuji"
   ];
 
   const handleArtistChange = (artistId: string) => {
@@ -64,7 +78,8 @@ const AddAlbum = () => {
         image: formData.image || null,
         release_date: formData.release_date,
         tracks: formData.tracks,
-        description: formData.description || null
+        description: formData.description || null,
+        song_link: formData.song_link || null
       });
 
       navigate("/admin/dashboard");
@@ -83,7 +98,7 @@ const AddAlbum = () => {
     );
   }
 
-  if (!user || !isAdmin) {
+  if (!isAuthenticated) {
     return null;
   }
 
@@ -174,16 +189,22 @@ const AddAlbum = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image" className="text-gray-300">Image URL</Label>
+                <Label htmlFor="song_link" className="text-gray-300">Song Link</Label>
                 <Input
-                  id="image"
+                  id="song_link"
                   type="url"
-                  value={formData.image}
-                  onChange={(e) => setFormData({...formData, image: e.target.value})}
+                  value={formData.song_link}
+                  onChange={(e) => setFormData({...formData, song_link: e.target.value})}
                   className="bg-gray-800 border-gray-700 text-white"
-                  placeholder="https://example.com/image.jpg"
+                  placeholder="https://spotify.com/track/..."
                 />
               </div>
+
+              <ImageUpload
+                onImageUploaded={(url) => setFormData({...formData, image: url})}
+                currentImage={formData.image}
+                label="Album Cover"
+              />
 
               <div className="space-y-2">
                 <Label htmlFor="description" className="text-gray-300">Description</Label>
