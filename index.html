@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Alpha Tunes - Modern Music Blog</title>
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon" />
     <meta name="description" content="Alpha Tunes - Your destination for the latest music trends, album previews, and artist promotions" />
     <meta name="author" content="Alpha Tunes" />
 
@@ -21,8 +20,24 @@
 
   <body>
     <div id="root"></div>
+
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="../alpha-tune/public/favicon.ico" type="module"></script>
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        const favicon = document.querySelector('link[rel="icon"]');
+        if (favicon) {
+          favicon.href = '../alpha-tune/public/favicon.ico';  // Adjust path as needed based on your project structure
+        } else {
+          const newFavicon = document.createElement('link');
+          newFavicon.rel = 'icon';
+          newFavicon.href = '../alpha-tune/public/favicon.ico';
+          document.head.appendChild(newFavicon);
+        }
+      });
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
